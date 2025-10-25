@@ -16,12 +16,12 @@ This guide walks you through deploying Gravedigger in a production environment.
 
 Before deploying Gravedigger, ensure:
 
-- [ ] Windows Server with Volume Shadow Copy Service enabled
+- [ ] Windows Server 2016+ with Volume Shadow Copy Service enabled
 - [ ] Administrative privileges for installation and VSS access
 - [ ] Sufficient disk space:
   - Source volume: For shadow copies (typically 10-20% of volume size)
   - Destination: For replicas (size of database × RetainGenerations)
-- [ ] .NET Framework 4.8 or higher installed
+- [ ] .NET 8.0 SDK (for building) - **Not required if using self-contained executable**
 - [ ] VSS services are running and set to automatic startup
 - [ ] Network path accessible (if using network destination)
 - [ ] Service account created with appropriate permissions
@@ -56,29 +56,33 @@ wmic shadowcopy call create Volume=C:\
 
 ## Building the Application
 
+**Prerequisites**: Install .NET 8.0 SDK from https://dotnet.microsoft.com/download/dotnet/8.0
+
 ### Option 1: Using the Build Script (Recommended)
 
 ```cmd
-# On Windows
+# On Windows - builds both debug and self-contained release
 build.bat
 ```
 
-### Option 2: Using .NET SDK
+This creates a **single-file, self-contained executable** that includes all dependencies.
+
+### Option 2: Using .NET CLI
 
 ```cmd
+# Build only (requires .NET 8 runtime on target)
 dotnet build -c Release
+
+# Publish as self-contained single-file executable (recommended)
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
 ```
 
-### Option 3: Using MSBuild
+### Output Locations
 
-```cmd
-# Adjust path to your MSBuild installation
-"C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe" Gravedigger.csproj /p:Configuration=Release
-```
+- **Self-contained**: `bin\Release\net8.0-windows\win-x64\publish\Gravedigger.exe`
+- **Framework-dependent**: `bin\Release\net8.0-windows\win-x64\Gravedigger.exe`
 
-The compiled executable will be in:
-- With .NET SDK: `bin\Release\net48\win-x64\Gravedigger.exe`
-- With MSBuild: `bin\Release\net48\Gravedigger.exe`
+**Recommended**: Use the self-contained version (`publish\Gravedigger.exe`) so target machines don't need .NET installed.
 
 ## Initial Setup
 
@@ -89,8 +93,11 @@ The compiled executable will be in:
 mkdir C:\Gravedigger
 mkdir C:\Gravedigger\Logs
 
-# Copy executable
-copy bin\Release\net48\win-x64\Gravedigger.exe C:\Gravedigger\
+# Copy self-contained executable (recommended - no .NET runtime required)
+copy bin\Release\net8.0-windows\win-x64\publish\Gravedigger.exe C:\Gravedigger\
+
+# OR copy framework-dependent version (requires .NET 8 runtime)
+# copy bin\Release\net8.0-windows\win-x64\Gravedigger.exe C:\Gravedigger\
 ```
 
 ### 2. Create Configuration File

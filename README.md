@@ -17,10 +17,12 @@ Gravedigger is a Windows-based tool that replicates DBISAM databases using Volum
 ## Prerequisites
 
 ### System Requirements
-- Windows Server or Windows 10/11 with Volume Shadow Copy Service enabled
-- .NET Framework 4.8 or higher
+- Windows Server 2016+ or Windows 10/11 with Volume Shadow Copy Service enabled
+- .NET 8.0 Runtime or SDK (for building from source)
 - Administrative privileges (required for VSS access)
 - Sufficient disk space for shadow copies and replicas
+
+**Note**: The published executable is self-contained and does not require .NET to be installed on target machines.
 
 ### Required Services
 The following Windows services must be running:
@@ -43,23 +45,37 @@ net start swprv
 
 ### Building from Source
 
+**Requirements**: .NET 8.0 SDK or later ([Download here](https://dotnet.microsoft.com/download/dotnet/8.0))
+
 1. Clone the repository:
 ```bash
 git clone https://github.com/lawless-m/Gravedigger.git
 cd Gravedigger
 ```
 
-2. Build the project:
-```bash
-dotnet build -c Release
-```
+2. Build and publish the project:
 
-or using MSBuild:
+**Option A: Using the build script (Windows)**
 ```cmd
-msbuild Gravedigger.csproj /p:Configuration=Release
+build.bat
 ```
 
-3. The executable will be in `bin\Release\net48\win-x64\`
+**Option B: Using dotnet CLI**
+```bash
+# Build only
+dotnet build -c Release
+
+# Publish as single-file executable (recommended)
+dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true
+```
+
+3. The executable will be in `bin\Release\net8.0-windows\win-x64\publish\Gravedigger.exe`
+
+**Benefits of .NET 8**:
+- Modern C# language features
+- Better performance
+- Long-term support (LTS)
+- Self-contained deployment (no runtime installation needed on target machines)
 
 ### Pre-built Binaries
 Download the latest release from the [Releases](https://github.com/lawless-m/Gravedigger/releases) page.
