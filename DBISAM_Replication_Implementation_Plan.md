@@ -9,11 +9,11 @@ DBISAM is a file-based database system that stores data in `.dat`, `.idx`, `.blb
 ## Prerequisites
 
 ### System Requirements
-- Windows Server 2016+ with Volume Shadow Copy Service enabled
+- Windows Server 2012, 2012 R2, 2016, 2019, 2022, or newer with Volume Shadow Copy Service enabled
 - Administrative privileges for shadow copy access
 - Sufficient disk space for shadow copies
-- .NET 8.0 SDK (for building) or .NET 8.0 Runtime (for running)
-- **Note**: Self-contained deployments don't require .NET runtime on target machines
+- .NET 8.0 SDK (for building) or .NET 8.0 Runtime (for running framework-dependent builds)
+- **Note**: Self-contained deployments don't require .NET runtime on target machines (works on Server 2012+)
 
 ### Services That Must Be Running
 1. **Volume Shadow Copy** service

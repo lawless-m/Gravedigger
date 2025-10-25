@@ -16,7 +16,7 @@ This guide walks you through deploying Gravedigger in a production environment.
 
 Before deploying Gravedigger, ensure:
 
-- [ ] Windows Server 2016+ with Volume Shadow Copy Service enabled
+- [ ] Windows Server 2012 or newer with Volume Shadow Copy Service enabled
 - [ ] Administrative privileges for installation and VSS access
 - [ ] Sufficient disk space:
   - Source volume: For shadow copies (typically 10-20% of volume size)
@@ -25,6 +25,12 @@ Before deploying Gravedigger, ensure:
 - [ ] VSS services are running and set to automatic startup
 - [ ] Network path accessible (if using network destination)
 - [ ] Service account created with appropriate permissions
+
+**Check your Windows Server version:**
+```cmd
+# Run this command to check your version
+systeminfo | findstr /B /C:"OS Name" /C:"OS Version"
+```
 
 ### Verify VSS Services
 

@@ -17,19 +17,26 @@ Gravedigger is a Windows-based tool that replicates DBISAM databases using Volum
 ## Prerequisites
 
 ### System Requirements
-- Windows Server 2016+ or Windows 10/11 with Volume Shadow Copy Service enabled
-- .NET 8.0 Runtime or SDK (for building from source)
+- **Windows Server**: 2012, 2012 R2, 2016, 2019, 2022, or newer
+- **Windows Client**: Windows 10 (version 1607+) or Windows 11
+- Volume Shadow Copy Service enabled
+- .NET 8.0 SDK (for building from source only)
 - Administrative privileges (required for VSS access)
 - Sufficient disk space for shadow copies and replicas
 
-**Note**: The published executable is self-contained and does not require .NET to be installed on target machines.
+**Note**: The published executable is self-contained and does not require .NET to be installed on target machines. It will run on Windows Server 2012 and newer.
 
 ### Required Services
 The following Windows services must be running:
 1. **Volume Shadow Copy** (VSS)
 2. **MS Software Shadow Copy Provider** (swprv)
 
-Check service status:
+**Quick verification**: Run the included verification script:
+```cmd
+verify-vss.bat
+```
+
+Or manually check service status:
 ```cmd
 sc query VSS
 sc query swprv
@@ -40,6 +47,8 @@ Start services if needed:
 net start VSS
 net start swprv
 ```
+
+**Note**: VSS has been available since Windows Server 2003, so it should work on any supported Windows version. See [COMPATIBILITY.md](COMPATIBILITY.md) for details.
 
 ## Installation
 
