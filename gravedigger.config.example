@@ -1,0 +1,66 @@
+# Gravedigger Configuration File
+# DBISAM Shadow Copy Replication
+#
+# Copy this file to 'gravedigger.config' and edit with your settings
+
+[Source]
+# Volume to get shadow copies from (e.g., C:, D:)
+Volume=C:
+
+# Full path to the database directory
+DatabasePath=C:\Database\Production
+
+# File extensions to replicate (comma-separated)
+# Common DBISAM extensions: .dat (data), .idx (index), .blb (blob), .bak (backup)
+Extensions=*.dat,*.idx,*.blb,*.bak
+
+[Destination]
+# Destination path for replicated files
+# Each replication creates a timestamped subdirectory (e.g., 20251025_143015)
+Path=D:\Replicas\Production
+
+# Number of replica generations to keep (older ones are deleted automatically)
+# Set to 3 or higher to maintain multiple restore points
+RetainGenerations=3
+
+[Schedule]
+# Frequency description (for documentation purposes only)
+# Actual scheduling is done via Windows Task Scheduler
+Frequency=Hourly
+
+# Enable retry on failure
+RetryOnFailure=True
+
+# Number of retry attempts for failed file copies
+RetryAttempts=3
+
+# Delay between retries (in minutes)
+RetryDelayMinutes=5
+
+[Logging]
+# Directory for log files
+# Log files are named: replication_YYYYMMDD_HHmmss.log
+LogPath=C:\Gravedigger\Logs
+
+# Log level: Debug, Information, Warning, Error, Critical
+# Debug: Most verbose, includes all operations
+# Information: Normal operations, recommended for production
+# Warning: Only warnings and errors
+# Error: Only errors and critical issues
+# Critical: Only critical failures
+LogLevel=Information
+
+# Number of days to retain log files (older logs are deleted automatically)
+RetentionDays=30
+
+[Monitoring]
+# Send alerts on failure (not yet implemented - placeholder for future feature)
+AlertOnFailure=True
+
+# Email address for alerts (requires additional SMTP configuration)
+AlertEmail=dbadmin@company.com
+
+# Maximum acceptable age of shadow copy (in hours)
+# If the latest shadow copy is older than this, a warning is logged
+# Recommended: 2 hours for frequently updated databases
+MaxReplicaAge=2
