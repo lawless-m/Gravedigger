@@ -77,14 +77,96 @@ If you absolutely cannot upgrade Windows, you could:
 
 ## Volume Shadow Copy Service (VSS) Compatibility
 
-VSS has been available since Windows Server 2003, so if your server is running Windows Server 2012 or newer, VSS will be available.
+VSS has been available since **Windows Server 2003**, so it should work on any Windows Server version that can run .NET 8.
+
+### VSS Version History
+- ✅ Windows Server 2022 - VSS 1.0+
+- ✅ Windows Server 2019 - VSS 1.0+
+- ✅ Windows Server 2016 - VSS 1.0+
+- ✅ Windows Server 2012 R2 - VSS 1.0+
+- ✅ Windows Server 2012 - VSS 1.0+
+- ✅ Windows Server 2008 R2 - VSS 1.0+
+- ✅ Windows Server 2008 - VSS 1.0+
+- ✅ Windows Server 2003 R2 - VSS 1.0 (original)
+
+**VSS is NOT a concern for compatibility** - if Windows is installed, VSS is available.
+
+### Quick VSS Verification
+
+Run the included verification script:
+```cmd
+verify-vss.bat
+```
+
+Or manually check:
 
 **Check if VSS is available:**
 ```cmd
 vssadmin list providers
 ```
 
-If this command works and shows providers, VSS is available.
+**Check if VSS service is running:**
+```cmd
+sc query VSS
+```
+
+**Check for existing shadow copies:**
+```cmd
+vssadmin list shadows /for=C:
+```
+
+**Start VSS service if not running:**
+```cmd
+net start VSS
+net start swprv
+```
+
+### Common VSS Issues
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| "VSS service not found" | VSS not installed | VSS is built into Windows - may indicate system corruption |
+| "No shadow copies found" | System Protection disabled | Enable System Protection on the volume |
+| "Access denied" | Not running as admin | Run command prompt as Administrator |
+| "Insufficient storage" | Not enough disk space | Free up space or adjust shadow copy storage |
+
+### Enabling System Protection (Shadow Copies)
+
+If shadow copies don't exist, you need to enable System Protection:
+
+**GUI Method:**
+1. Right-click "This PC" → Properties
+2. Click "System Protection" (left sidebar)
+3. Select your drive (C:) → Configure
+4. Select "Turn on system protection"
+5. Set max usage (recommended: 10-20% of drive)
+6. Click OK
+
+**Command Line Method:**
+```cmd
+REM Enable System Protection on C:
+vssadmin resize shadowstorage /for=C: /on=C: /maxsize=20%
+
+REM Create a manual shadow copy
+wmic shadowcopy call create Volume=C:\
+```
+
+### VSS Storage Considerations
+
+Shadow copies consume disk space:
+- **Default**: 10% of volume or 10GB, whichever is less
+- **Recommended**: 10-20% of volume for database servers
+- **Minimum**: At least 300MB
+
+Check current storage allocation:
+```cmd
+vssadmin list shadowstorage
+```
+
+Resize shadow copy storage:
+```cmd
+vssadmin resize shadowstorage /for=C: /on=C: /maxsize=20GB
+```
 
 ## .NET Runtime Requirements
 

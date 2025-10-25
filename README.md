@@ -31,7 +31,12 @@ The following Windows services must be running:
 1. **Volume Shadow Copy** (VSS)
 2. **MS Software Shadow Copy Provider** (swprv)
 
-Check service status:
+**Quick verification**: Run the included verification script:
+```cmd
+verify-vss.bat
+```
+
+Or manually check service status:
 ```cmd
 sc query VSS
 sc query swprv
@@ -42,6 +47,8 @@ Start services if needed:
 net start VSS
 net start swprv
 ```
+
+**Note**: VSS has been available since Windows Server 2003, so it should work on any supported Windows version. See [COMPATIBILITY.md](COMPATIBILITY.md) for details.
 
 ## Installation
 
