@@ -1,5 +1,7 @@
 # Gravedigger
 
+<img src="gravedigger.jpg" alt="Gravedigger" width="400">
+
 **DBISAM Shadow Copy Replication Tool**
 
 Gravedigger is a Windows-based tool that replicates DBISAM databases using Volume Shadow Copy Service (VSS). It extracts database files from shadow copies (restore points) to create consistent backups without interrupting the running database.
