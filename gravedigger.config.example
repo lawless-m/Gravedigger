@@ -34,8 +34,8 @@ RetryOnFailure=True
 # Number of retry attempts for failed file copies
 RetryAttempts=3
 
-# Delay between retries (in minutes)
-RetryDelayMinutes=5
+# Delay between retries (in seconds)
+RetryDelaySeconds=5
 
 [Logging]
 # Directory for log files

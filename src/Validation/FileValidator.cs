@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using Gravedigger.Logging;
+using Gravedigger.Utilities;
 
 namespace Gravedigger.Validation
 {
@@ -28,14 +28,6 @@ namespace Gravedigger.Validation
                 Warnings = new List<string>();
                 IsValid = true;
             }
-        }
-
-        public class FileInfo
-        {
-            public string FilePath { get; set; }
-            public long FileSize { get; set; }
-            public string Checksum { get; set; }
-            public DateTime LastWriteTime { get; set; }
         }
 
         public FileValidator(ReplicationLogger logger)
@@ -79,8 +71,9 @@ namespace Gravedigger.Validation
                 // Compare file counts
                 if (sourceFiles.Count != destFiles.Count)
                 {
-                    result.Warnings.Add($"File count mismatch: Source={sourceFiles.Count}, Destination={destFiles.Count}");
-                    _logger.LogWarning($"File count mismatch: Source has {sourceFiles.Count} files, Destination has {destFiles.Count} files");
+                    result.IsValid = false;
+                    result.Errors.Add($"File count mismatch: Source={sourceFiles.Count}, Destination={destFiles.Count}");
+                    _logger.LogError($"File count mismatch: Source has {sourceFiles.Count} files, Destination has {destFiles.Count} files");
                 }
 
                 // Validate each source file has a corresponding destination file
@@ -112,7 +105,7 @@ namespace Gravedigger.Validation
                     }
                 }
 
-                _logger.LogInformation($"Validation complete: {result.FilesValidated} files validated, {FormatBytes(result.TotalBytes)} total");
+                _logger.LogInformation($"Validation complete: {result.FilesValidated} files validated, {ByteFormatter.Format(result.TotalBytes)} total");
 
                 if (result.Errors.Any())
                 {
@@ -139,43 +132,6 @@ namespace Gravedigger.Validation
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Calculates checksums for files (optional, more thorough validation)
-        /// </summary>
-        public FileInfo GetFileInfo(string filePath)
-        {
-            var fileInfo = new System.IO.FileInfo(filePath);
-
-            return new FileInfo
-            {
-                FilePath = filePath,
-                FileSize = fileInfo.Length,
-                LastWriteTime = fileInfo.LastWriteTime,
-                Checksum = CalculateChecksum(filePath)
-            };
-        }
-
-        /// <summary>
-        /// Calculates MD5 checksum for a file
-        /// </summary>
-        private string CalculateChecksum(string filePath)
-        {
-            try
-            {
-                using (var md5 = MD5.Create())
-                using (var stream = File.OpenRead(filePath))
-                {
-                    var hash = md5.ComputeHash(stream);
-                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning($"Could not calculate checksum for {filePath}: {ex.Message}");
-                return null;
-            }
         }
 
         /// <summary>
@@ -207,19 +163,5 @@ namespace Gravedigger.Validation
             return files;
         }
 
-        private string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double len = bytes;
-            int order = 0;
-
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len = len / 1024;
-            }
-
-            return $"{len:0.##} {sizes[order]}";
-        }
     }
 }

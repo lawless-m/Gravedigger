@@ -23,7 +23,7 @@ namespace Gravedigger.Config
         public string Frequency { get; set; }
         public bool RetryOnFailure { get; set; }
         public int RetryAttempts { get; set; }
-        public int RetryDelayMinutes { get; set; }
+        public int RetryDelaySeconds { get; set; }
 
         // Logging configuration
         public string LogPath { get; set; }
@@ -42,7 +42,7 @@ namespace Gravedigger.Config
             RetainGenerations = 3;
             RetryOnFailure = true;
             RetryAttempts = 3;
-            RetryDelayMinutes = 5;
+            RetryDelaySeconds = 5;
             LogLevel = "Information";
             LogRetentionDays = 30;
             AlertOnFailure = true;
@@ -158,9 +158,9 @@ namespace Gravedigger.Config
                     if (int.TryParse(value, out var retryAttempts))
                         config.RetryAttempts = retryAttempts;
                     break;
-                case "retrydelayminutes":
+                case "retrydelayseconds":
                     if (int.TryParse(value, out var retryDelay))
-                        config.RetryDelayMinutes = retryDelay;
+                        config.RetryDelaySeconds = retryDelay;
                     break;
             }
         }

@@ -4,6 +4,7 @@ using System.Reflection;
 using Gravedigger.Config;
 using Gravedigger.Engine;
 using Gravedigger.Logging;
+using Gravedigger.Utilities;
 
 namespace Gravedigger
 {
@@ -88,7 +89,7 @@ namespace Gravedigger
 
                 // Log result
                 string summary = result.Success
-                    ? $"Successfully replicated {result.FilesReplicated} files ({FormatBytes(result.BytesReplicated)}) in {result.Duration.TotalSeconds:F2} seconds"
+                    ? $"Successfully replicated {result.FilesReplicated} files ({ByteFormatter.Format(result.BytesReplicated)}) in {result.Duration.TotalSeconds:F2} seconds"
                     : $"Replication failed: {result.ErrorMessage}";
 
                 logger.LogSessionEnd(result.Success, summary);
@@ -102,7 +103,7 @@ namespace Gravedigger
                     Console.WriteLine("   REPLICATION SUCCESSFUL");
                     Console.ForegroundColor = ConsoleColor.White;
                     Console.WriteLine($"   Files: {result.FilesReplicated}");
-                    Console.WriteLine($"   Bytes: {FormatBytes(result.BytesReplicated)}");
+                    Console.WriteLine($"   Bytes: {ByteFormatter.Format(result.BytesReplicated)}");
                     Console.WriteLine($"   Duration: {result.Duration.TotalSeconds:F2} seconds");
                 }
                 else
@@ -219,8 +220,8 @@ RetryOnFailure=True
 # Number of retry attempts
 RetryAttempts=3
 
-# Delay between retries (in minutes)
-RetryDelayMinutes=5
+# Delay between retries (in seconds)
+RetryDelaySeconds=5
 
 [Logging]
 # Directory for log files
@@ -265,19 +266,5 @@ MaxReplicaAge=2
             }
         }
 
-        static string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double len = bytes;
-            int order = 0;
-
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len = len / 1024;
-            }
-
-            return $"{len:0.##} {sizes[order]}";
-        }
     }
 }
