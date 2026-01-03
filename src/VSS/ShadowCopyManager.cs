@@ -75,7 +75,14 @@ namespace Gravedigger.VSS
                 process.Start();
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
-                process.WaitForExit();
+
+                // Timeout after 30 seconds to prevent hanging
+                if (!process.WaitForExit(30000))
+                {
+                    process.Kill();
+                    _logger.LogError("vssadmin timed out after 30 seconds");
+                    return new List<ShadowCopyInfo>();
+                }
 
                 if (process.ExitCode != 0)
                 {
@@ -196,7 +203,14 @@ namespace Gravedigger.VSS
 
                 process.Start();
                 string output = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
+
+                // Timeout after 10 seconds
+                if (!process.WaitForExit(10000))
+                {
+                    process.Kill();
+                    _logger.LogError("VSS service check timed out after 10 seconds");
+                    return false;
+                }
 
                 return output.Contains("RUNNING");
             }

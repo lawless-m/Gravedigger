@@ -137,7 +137,8 @@ namespace Gravedigger.Config
                     config.DestinationPath = value;
                     break;
                 case "retaingenerations":
-                    config.RetainGenerations = int.Parse(value);
+                    if (int.TryParse(value, out var retainGen))
+                        config.RetainGenerations = retainGen;
                     break;
             }
         }
@@ -150,13 +151,16 @@ namespace Gravedigger.Config
                     config.Frequency = value;
                     break;
                 case "retryonfailure":
-                    config.RetryOnFailure = bool.Parse(value);
+                    if (bool.TryParse(value, out var retryOnFail))
+                        config.RetryOnFailure = retryOnFail;
                     break;
                 case "retryattempts":
-                    config.RetryAttempts = int.Parse(value);
+                    if (int.TryParse(value, out var retryAttempts))
+                        config.RetryAttempts = retryAttempts;
                     break;
                 case "retrydelayminutes":
-                    config.RetryDelayMinutes = int.Parse(value);
+                    if (int.TryParse(value, out var retryDelay))
+                        config.RetryDelayMinutes = retryDelay;
                     break;
             }
         }
@@ -172,7 +176,8 @@ namespace Gravedigger.Config
                     config.LogLevel = value;
                     break;
                 case "retentiondays":
-                    config.LogRetentionDays = int.Parse(value);
+                    if (int.TryParse(value, out var retentionDays))
+                        config.LogRetentionDays = retentionDays;
                     break;
             }
         }
@@ -182,13 +187,15 @@ namespace Gravedigger.Config
             switch (key.ToLower())
             {
                 case "alertonfailure":
-                    config.AlertOnFailure = bool.Parse(value);
+                    if (bool.TryParse(value, out var alertOnFail))
+                        config.AlertOnFailure = alertOnFail;
                     break;
                 case "alertemail":
                     config.AlertEmail = value;
                     break;
                 case "maxreplicaage":
-                    config.MaxReplicaAgeHours = int.Parse(value);
+                    if (int.TryParse(value, out var maxAge))
+                        config.MaxReplicaAgeHours = maxAge;
                     break;
             }
         }
