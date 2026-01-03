@@ -1,6 +1,6 @@
 # Gravedigger
 
-<img src="gravedigger.jpg" alt="Gravedigger" width="400">
+![Gravedigger](gravedigger.jpg)
 
 **DBISAM Shadow Copy Replication Tool**
 
