@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Gravedigger.Config;
 using Gravedigger.Logging;
+using Gravedigger.Utilities;
 using Gravedigger.VSS;
 using Gravedigger.Validation;
 
@@ -124,7 +125,7 @@ namespace Gravedigger.Engine
 
                 _logger.LogInformation($"=== Replication Completed Successfully ===");
                 _logger.LogInformation($"Files Replicated: {result.FilesReplicated}");
-                _logger.LogInformation($"Bytes Replicated: {FormatBytes(result.BytesReplicated)}");
+                _logger.LogInformation($"Bytes Replicated: {ByteFormatter.Format(result.BytesReplicated)}");
                 _logger.LogInformation($"Duration: {result.Duration.TotalSeconds:F2} seconds");
             }
             catch (Exception ex)
@@ -212,7 +213,7 @@ namespace Gravedigger.Engine
                             var fileInfo = new FileInfo(destFile);
                             totalBytesCopied += fileInfo.Length;
 
-                            _logger.LogInformation($"  Copied: {fileName} ({FormatBytes(fileInfo.Length)})");
+                            _logger.LogInformation($"  Copied: {fileName} ({ByteFormatter.Format(fileInfo.Length)})");
                         }
                     }
                 }
@@ -240,7 +241,7 @@ namespace Gravedigger.Engine
                     if (attempt > 0)
                     {
                         _logger.LogWarning($"Retry attempt {attempt} for {Path.GetFileName(sourceFile)}");
-                        Thread.Sleep(_config.RetryDelayMinutes * 60 * 1000); // Convert minutes to milliseconds
+                        Thread.Sleep(_config.RetryDelaySeconds * 1000);
                     }
 
                     File.Copy(sourceFile, destFile, overwrite: true);
@@ -298,19 +299,5 @@ namespace Gravedigger.Engine
             }
         }
 
-        private string FormatBytes(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double len = bytes;
-            int order = 0;
-
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len = len / 1024;
-            }
-
-            return $"{len:0.##} {sizes[order]}";
-        }
     }
 }
